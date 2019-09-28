@@ -26,7 +26,6 @@ public class MalFunctionBot {
     private DcMotor mainLift = null;     // scissor lift
 
     // Servos
-
     private Servo serv = null;
 
     // Switches
@@ -119,9 +118,18 @@ public class MalFunctionBot {
         }
     }
 
-    public void drive(DriveDirection direction, double power) {
-        setDriveDirection(direction);
-        setDrivePower(power);
+    public void drive(double leftStickX, double leftStickY, double rightStickX) {
+      double r = Math.hypot(leftStickX, leftStickY);
+      double robotAngle = Math.atan2(leftStickY, leftStickX) - Math.PI / 4;
+      final double p1 = r * Math.cos(robotAngle) + rightStickX;
+      final double p2 = r * Math.sin(robotAngle) - rightStickX;
+      final double p3 = r * Math.sin(robotAngle) + rightStickX;
+      final double p4 = r * Math.cos(robotAngle) - rightStickX;
+
+      lfDrive.setPower(p1);
+      rfDrive.setPower(p2);
+      lrDrive.setPower(p3);
+      rrDrive.setPower(p4);
     }
 
     private void initIMU() {
