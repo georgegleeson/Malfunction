@@ -1,0 +1,180 @@
+/* Copyright (c) 2017 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.HashMap;
+
+@TeleOp(name="MalFunctionBotAutonomous", group="Iterative Opmode")
+public class MalFunctionBotAutonomous extends OpMode
+{
+    // Declare OpMode members.
+    private ElapsedTime runtime = new ElapsedTime();
+
+    // robot variables
+    MalFunctionBot robot    = new MalFunctionBot();
+    MalGlobals.DEBUG_LEVELS INFO = MalGlobals.DEBUG_LEVELS.INFO;
+    MalGlobals.DEBUG_LEVELS VERBOSE = MalGlobals.DEBUG_LEVELS.VERBOSE;
+
+    HashMap<String, Telemetry.Item> telemetryItems = new HashMap<String, Telemetry.Item>();
+
+    int rot = 0;
+
+    TargetDetection detection = new TargetDetection();
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    public void init() {
+        robot.init(hardwareMap, telemetryItems.get("status"), telemetry, this);
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
+    }
+
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+        runtime.reset();
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+        // start moving
+
+        // run to back target
+
+        while (!detection.backTargetVisible) {
+            robot.drive(MalFunctionBot.DriveDirection.FORWARD, 1);
+        }
+
+        if (detection.backTargetVisible) {
+            detection.positionAtTarget();
+        }
+
+        // move foundation
+
+        robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
+
+        robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
+
+        robot.moveServo1(MalFunctionBot.ServoDirection.FULL_UP);
+
+        // turn and face alliance wall
+
+        // robot.rotateDrive(robot.robotAngle() + 90);
+
+        // strafe till see front zone alliance target
+
+        while (!detection.sideTargetVisible) {
+            robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
+        }
+
+        if (detection.sideTargetVisible) {
+            detection.positionAtTarget();
+        }
+
+        // turn 180 and look for first skystone
+
+        // robot.rotateDrive(robot.robotAngle() + 180);
+
+        while (!detection.skystoneVisible) {
+            robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 0.5);
+        }
+
+        // look at skystone
+
+        if (detection.skystoneVisible) {
+            detection.positionAtTarget();
+        }
+
+        // grab skystone
+
+        robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
+
+        robot.drive(MalFunctionBot.DriveDirection.REVERSE, 1);
+
+        // turn 90 degrees left
+
+        // robot.rotateDrive(robot.robotAngle() + 90);
+
+        // run forward till back target
+
+        while (!detection.backTargetVisible) {
+            robot.drive(MalFunctionBot.DriveDirection.FORWARD, 1);
+        }
+
+        if (detection.backTargetVisible) {
+            detection.positionAtTarget();
+        }
+
+        // turn 90 degrees right
+
+        // robot.rotateDrive(robot.robotAngle() - 90);
+
+        // strafe till see skystone
+
+        robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 1);
+
+        // grab skystone
+
+        robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
+
+        robot.drive(MalFunctionBot.DriveDirection.REVERSE, 1);
+
+        // turn 90 degrees left
+
+        // robot.rotateDrive(robot.robotAngle() + 90);
+
+        // drive forward
+
+        robot.drive(MalFunctionBot.DriveDirection.FORWARD, 1);
+    }
+
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
+    }
+}
