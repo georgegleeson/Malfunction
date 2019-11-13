@@ -62,7 +62,7 @@ public class MalFunctionBot {
     public HashMap<String, Boolean> robotConfig = new HashMap<String, Boolean>();
 
     // Robot hardware map
-    HardwareMap hwMap       = null;
+    public HardwareMap hwMap       = null;
 
     // OpMode object
     private OpMode opMode = null;
@@ -148,9 +148,9 @@ public class MalFunctionBot {
         // turn on or off hardware modules
         robotConfig.put("IMU", false);
         robotConfig.put("drive", true);
-        robotConfig.put("scissorLift", true);
-        robotConfig.put("grippy", true);
-        robotConfig.put("servos", true);
+        robotConfig.put("scissorLift", false);
+        robotConfig.put("grippy", false);
+        robotConfig.put("servos", false);
     }
 
     //
@@ -759,4 +759,3 @@ public class MalFunctionBot {
         }
     }
 }
-
