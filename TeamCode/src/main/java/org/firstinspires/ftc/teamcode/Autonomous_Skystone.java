@@ -31,7 +31,9 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
 
     int rot = 0;
 
-    TargetDetection detection = new TargetDetection();
+    ConceptVuforiaSkyStoneNavigationNew detection = new ConceptVuforiaSkyStoneNavigationNew();
+
+    int cam;
 
     @Override
     public void init() {
@@ -42,29 +44,45 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
         initTelemetry();
         robot.init(hardwareMap, telemetryItems.get("status"), telemetry, this);
 
-        detection.startSensing();
+        cam = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        detection.startSensing(cam);
     }
 
     @Override
     public void init_loop() {
+
     }
 
     @Override
     public void start() {
+
+    }
+
+    @Override
+    public void loop() {
         runtime.reset();
         while (runtime.seconds() < 30) {
             // start moving
 
             // look for first skystone
 
+            // keeps throwing error for getting stuck in this loop and also doesnt appear to be able to sense the blocks???
+
             while (!detection.skystoneVisible) {
+                detection.senseTargets();
                 robot.drive(DriveDirection.REVERSE, 0.5);
             }
 
             // look at skystone
 
+            telemetry.addData("wow it worked", "");
+            telemetry.update();
+
+
             if (detection.skystoneVisible) {
-                detection.positionAtTarget();
+                detection.senseTargets();
+                positionAtTarget();
             }
 
             // grab skystone
@@ -84,13 +102,15 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
             // strafe back alot
 
             while (!detection.skystoneVisible) {
+                detection.startSensing(cam);
                 robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 0.5);
             }
 
             // look at skystone
 
             if (detection.skystoneVisible) {
-                detection.positionAtTarget();
+                detection.startSensing(cam);
+                positionAtTarget();
             }
 
             // grab skystone
@@ -104,11 +124,6 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
             robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
         }
         robot.drive(DriveDirection.FORWARD, 0);
-    }
-
-    @Override
-    public void loop() {
-
     }
 
 
@@ -143,4 +158,26 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
             this.telemetryItems.put("dr_stick_lx", telemetry.addData("dr_stick_lx", ""));
         }
     }
-}
+
+    // function that uses the position and rotation values from Vuforia and the movement functions of the robot to position itself at the required locations on the field
+    public void positionAtTarget(){
+        while (detection.zRotation != 90 && detection.xPosition != 10 && detection.yPosition != 10) {
+                robot.drive(MalFunctionBot.DriveDirection.TANK_ANTICLOCKWISE, 0.5);
+            }
+            while (detection.zRotation > 90) {
+                robot.drive(MalFunctionBot.DriveDirection.TANK_CLOCKWISE, 0.5);
+            }
+            while (detection.xPosition < 10) {
+                robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 0.5);
+            }
+            while (detection.xPosition > 10) {
+                robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 0.5);
+            }
+            while (detection.yPosition < 10) {
+                robot.drive(MalFunctionBot.DriveDirection.REVERSE, 0.5);
+            }
+            while (detection.yPosition > 10) {
+                robot.drive(MalFunctionBot.DriveDirection.FORWARD, 0.5);
+            }
+        }
+    }
