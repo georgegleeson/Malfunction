@@ -26,6 +26,8 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
 
     // auto run height variables
     boolean dpadReady = true;
+    
+    boolean keepLooking = true;
 
     int scissorHeight = 0;
 
@@ -47,6 +49,8 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
         cam = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         detection.startSensing(cam);
+        
+        runtime.reset();
     }
 
     @Override
@@ -61,7 +65,31 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
 
     @Override
     public void loop() {
-        runtime.reset();
+        // don't do this here, it needs to be in the init method
+        // runtime.reset();
+        
+        if(runtime.seconds() < 30 && keepLooking) {    
+            if(detection.skystoneVisible) {
+                // do visible stuff like drive to it
+                telemetry.addData("wow it worked", "");
+                telemetry.update();
+                keepLooking = false;
+            } else {
+                // can't see it so do something
+                detection.senseTargets();
+                robot.drive(REVERSE, 0.5);
+            }
+        }
+
+        if(!keepLooking) {
+            // you can do some stuff here as well after it's located the target
+        }
+
+        // ********************
+        // ** it's already looping so you don't need the while loops.
+        // ********************
+        
+        
         while (runtime.seconds() < 30) {
             // start moving
 
