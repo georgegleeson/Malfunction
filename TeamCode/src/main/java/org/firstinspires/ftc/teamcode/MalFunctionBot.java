@@ -148,9 +148,9 @@ public class MalFunctionBot {
         // turn on or off hardware modules
         robotConfig.put("IMU", false);
         robotConfig.put("drive", true);
-        robotConfig.put("scissorLift", false);
-        robotConfig.put("grippy", false);
-        robotConfig.put("servos", false);
+        robotConfig.put("scissorLift", true);
+        robotConfig.put("grippy", true);
+        robotConfig.put("servos", true);
     }
 
     //

@@ -67,7 +67,7 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
     public void loop() {
         // don't do this here, it needs to be in the init method
         // runtime.reset();
-        
+
         if(runtime.seconds() < 30 && keepLooking) {    
             if(detection.skystoneVisible) {
                 // do visible stuff like drive to it
@@ -77,12 +77,13 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
             } else {
                 // can't see it so do something
                 detection.senseTargets();
-                robot.drive(REVERSE, 0.5);
+                robot.drive(DriveDirection.REVERSE, 0.2);
             }
         }
 
         if(!keepLooking) {
             // you can do some stuff here as well after it's located the target
+            positionAtTarget();
         }
 
         // ********************
@@ -90,68 +91,68 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
         // ********************
         
         
-        while (runtime.seconds() < 30) {
-            // start moving
-
-            // look for first skystone
-
-            // keeps throwing error for getting stuck in this loop and also doesnt appear to be able to sense the blocks???
-
-            while (!detection.skystoneVisible) {
-                detection.senseTargets();
-                robot.drive(DriveDirection.REVERSE, 0.5);
-            }
-
-            // look at skystone
-
-            telemetry.addData("wow it worked", "");
-            telemetry.update();
-
-
-            if (detection.skystoneVisible) {
-                detection.senseTargets();
-                positionAtTarget();
-            }
-
-            // grab skystone
-
-            robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
-
-            robot.drive(MalFunctionBot.DriveDirection.REVERSE, 1);
-
-            // strafe for alot
-
-            robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
-
-            // servo up
-
-            robot.moveServo1(MalFunctionBot.ServoDirection.FULL_UP);
-
-            // strafe back alot
-
-            while (!detection.skystoneVisible) {
-                detection.startSensing(cam);
-                robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 0.5);
-            }
-
-            // look at skystone
-
-            if (detection.skystoneVisible) {
-                detection.startSensing(cam);
-                positionAtTarget();
-            }
-
-            // grab skystone
-
-            robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
-
-            robot.drive(MalFunctionBot.DriveDirection.REVERSE, 1);
-
-            // strafe back alot
-
-            robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
-        }
-        robot.drive(DriveDirection.FORWARD, 0);
+//        while (runtime.seconds() < 30) {
+//            // start moving
+//
+//            // look for first skystone
+//
+//            // keeps throwing error for getting stuck in this loop and also doesnt appear to be able to sense the blocks???
+//
+//            while (!detection.skystoneVisible) {
+//                detection.senseTargets();
+//                robot.drive(DriveDirection.REVERSE, 0.5);
+//            }
+//
+//            // look at skystone
+//
+//            telemetry.addData("wow it worked", "");
+//            telemetry.update();
+//
+//
+//            if (detection.skystoneVisible) {
+//                detection.senseTargets();
+//                positionAtTarget();
+//            }
+//
+//            // grab skystone
+//
+//            robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
+//
+//            robot.drive(MalFunctionBot.DriveDirection.REVERSE, 1);
+//
+//            // strafe for alot
+//
+//            robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
+//
+//            // servo up
+//
+//            robot.moveServo1(MalFunctionBot.ServoDirection.FULL_UP);
+//
+//            // strafe back alot
+//
+//            while (!detection.skystoneVisible) {
+//                detection.startSensing(cam);
+//                robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 0.5);
+//            }
+//
+//            // look at skystone
+//
+//            if (detection.skystoneVisible) {
+//                detection.startSensing(cam);
+//                positionAtTarget();
+//            }
+//
+//            // grab skystone
+//
+//            robot.moveServo1(MalFunctionBot.ServoDirection.FULL_DOWN);
+//
+//            robot.drive(MalFunctionBot.DriveDirection.REVERSE, 1);
+//
+//            // strafe back alot
+//
+//            robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 1);
+//        }
+        // robot.drive(DriveDirection.FORWARD, 0);
     }
 
 
@@ -191,21 +192,27 @@ public class Autonomous_Skystone extends OpMode implements MalBase {
     public void positionAtTarget(){
         while (detection.zRotation != 90 && detection.xPosition != 10 && detection.yPosition != 10) {
                 robot.drive(MalFunctionBot.DriveDirection.TANK_ANTICLOCKWISE, 0.5);
+                detection.senseTargets();
             }
             while (detection.zRotation > 90) {
                 robot.drive(MalFunctionBot.DriveDirection.TANK_CLOCKWISE, 0.5);
+                detection.senseTargets();
             }
             while (detection.xPosition < 10) {
                 robot.drive(MalFunctionBot.DriveDirection.STRAFE_LEFT, 0.5);
+                detection.senseTargets();
             }
             while (detection.xPosition > 10) {
                 robot.drive(MalFunctionBot.DriveDirection.STRAFE_RIGHT, 0.5);
+                detection.senseTargets();
             }
             while (detection.yPosition < 10) {
                 robot.drive(MalFunctionBot.DriveDirection.REVERSE, 0.5);
+                detection.senseTargets();
             }
             while (detection.yPosition > 10) {
                 robot.drive(MalFunctionBot.DriveDirection.FORWARD, 0.5);
+                detection.senseTargets();
             }
         }
     }
